@@ -27,7 +27,7 @@ namespace Day2
             foreach (var testCase in testPartA)
             {
                 Assert.Equal(testCase.Value, PartA(testCase.Key));
-                Console.WriteLine(string.Join(",", PartA(testCase.Key)));
+                // Console.WriteLine(string.Join(",", PartA(testCase.Key)));
             }
 
             Console.WriteLine(string.Join(",", PartA(line)));
@@ -54,14 +54,13 @@ namespace Day2
             return Array.ConvertAll(intcodesLine.Split(","), s => int.Parse(s));
         }
 
-
         private static int[] PartA(string intcodesString)
         {
             int[] intcodes = splitInputLine(intcodesString);
 
-            for (int index = 0; index < intcodes.Length; index += 4)
+            for (int address = 0; address < intcodes.Length; address += 4)
             {
-                int opcode = intcodes[index];
+                int opcode = intcodes[address];
 
                 if (opcode == 99)
                 {
@@ -70,21 +69,21 @@ namespace Day2
                 }
                 else if (opcode == 1)
                 {
-                    int firstNumIndex = intcodes[index + 1];
-                    int secondNumIndex = intcodes[index + 2];
-                    int outputIndex = intcodes[index + 3];
-                    intcodes[outputIndex] = intcodes[firstNumIndex] + intcodes[secondNumIndex];
-                    // Console.WriteLine("Index: " + index + " Opcode: " + opcode + " Purview: [" + intcodes[index] + ", " + intcodes[index + 1] + ", " + intcodes[index + 2] + ", " + intcodes[index + 3] + "]");
-                    // Console.WriteLine("Addition, updating index " + intcodes[index + 3] + " to " + intcodes[firstNumIndex] + intcodes[secondNumIndex]);
+                    int param1 = intcodes[address + 1];
+                    int param2 = intcodes[address + 2];
+                    int param3 = intcodes[address + 3];
+                    intcodes[param3] = intcodes[param1] + intcodes[param2];
+                    // Console.WriteLine("Index: " + address + " Opcode: " + opcode + " Purview: [" + intcodes[address] + ", " + intcodes[address + 1] + ", " + intcodes[address + 2] + ", " + intcodes[address + 3] + "]");
+                    // Console.WriteLine("Addition, updating address " + intcodes[address + 3] + " to " + intcodes[param1] + intcodes[param2]);
                 }
                 else if (opcode == 2)
                 {
-                    int firstNumIndex = intcodes[index + 1];
-                    int secondNumIndex = intcodes[index + 2];
-                    int outputIndex = intcodes[index + 3];
-                    intcodes[outputIndex] = intcodes[firstNumIndex] * intcodes[secondNumIndex];
-                    // Console.WriteLine("Index: " + index + " Opcode: " + opcode + " Purview: [" + intcodes[index] + ", " + intcodes[index + 1] + ", " + intcodes[index + 2] + ", " + intcodes[index + 3] + "]");
-                    // Console.WriteLine("Multiplication, updating index " + intcodes[index + 3] + " to " + intcodes[firstNumIndex] + intcodes[secondNumIndex]);
+                    int param1 = intcodes[address + 1];
+                    int param2 = intcodes[address + 2];
+                    int param3 = intcodes[address + 3];
+                    intcodes[param3] = intcodes[param1] * intcodes[param2];
+                    // Console.WriteLine("Index: " + address + " Opcode: " + opcode + " Purview: [" + intcodes[address] + ", " + intcodes[address + 1] + ", " + intcodes[address + 2] + ", " + intcodes[address + 3] + "]");
+                    // Console.WriteLine("Multiplying, updating address " + intcodes[address + 3] + " to " + intcodes[param1] + intcodes[param2]);
                 }
             }
 
