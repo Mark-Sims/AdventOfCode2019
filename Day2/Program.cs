@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 namespace Day2
 {
@@ -6,7 +9,86 @@ namespace Day2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var inputFile = Environment.CurrentDirectory + "//input.txt";
+
+            // Input file should be a single line
+            string line = System.IO.File.ReadAllLines(inputFile)[0];
+
+            // Part A
+
+            Dictionary<string, int[]> testPartA = new Dictionary<string, int[]>
+            {
+                {"1,0,0,0,99" , new int[] {2,0,0,0,99 } },
+                {"2,3,0,3,99" , new int[] {2,3,0,6,99 } },
+                {"2,4,4,5,99,0" , new int[] {2,4,4,5,99,9801 } },
+                {"1,1,1,4,99,5,6,0,99" , new int[] {30,1,1,4,2,5,6,0,99} }
+            };
+
+            foreach (var testCase in testPartA)
+            {
+                Assert.Equal(testCase.Value, PartA(testCase.Key));
+                Console.WriteLine(string.Join(",", PartA(testCase.Key)));
+            }
+
+            Console.WriteLine(string.Join(",", PartA(line)));
+
+            // Part B
+
+            //            Dictionary<string, int> testPartB = new Dictionary<string, int>
+            //            {
+            //                {"14" , 2},
+            //                {"1969" , 966},
+            //                {"100756" , 50346},
+            //            };
+            //
+            //            foreach (var testCase in testPartB)
+            //            {
+            //                Assert.Equal(testCase.Value, PartB(new string[] { testCase.Key }));
+            //            }
+            //
+            //            Console.WriteLine(PartB(lines));
+        }
+
+        private static int[] splitInputLine(string intcodesLine)
+        {
+            return Array.ConvertAll(intcodesLine.Split(","), s => int.Parse(s));
+        }
+
+
+        private static int[] PartA(string intcodesString)
+        {
+            int[] intcodes = splitInputLine(intcodesString);
+
+            for (int index = 0; index < intcodes.Length; index += 4)
+            {
+                int opcode = intcodes[index];
+
+                if (opcode == 99)
+                {
+                    // Console.WriteLine("Breaking");
+                    break;
+                }
+                else if (opcode == 1)
+                {
+                    int firstNumIndex = intcodes[index + 1];
+                    int secondNumIndex = intcodes[index + 2];
+                    int outputIndex = intcodes[index + 3];
+                    intcodes[outputIndex] = intcodes[firstNumIndex] + intcodes[secondNumIndex];
+                    // Console.WriteLine("Index: " + index + " Opcode: " + opcode + " Purview: [" + intcodes[index] + ", " + intcodes[index + 1] + ", " + intcodes[index + 2] + ", " + intcodes[index + 3] + "]");
+                    // Console.WriteLine("Addition, updating index " + intcodes[index + 3] + " to " + intcodes[firstNumIndex] + intcodes[secondNumIndex]);
+                }
+                else if (opcode == 2)
+                {
+                    int firstNumIndex = intcodes[index + 1];
+                    int secondNumIndex = intcodes[index + 2];
+                    int outputIndex = intcodes[index + 3];
+                    intcodes[outputIndex] = intcodes[firstNumIndex] * intcodes[secondNumIndex];
+                    // Console.WriteLine("Index: " + index + " Opcode: " + opcode + " Purview: [" + intcodes[index] + ", " + intcodes[index + 1] + ", " + intcodes[index + 2] + ", " + intcodes[index + 3] + "]");
+                    // Console.WriteLine("Multiplication, updating index " + intcodes[index + 3] + " to " + intcodes[firstNumIndex] + intcodes[secondNumIndex]);
+                }
+            }
+
+            return intcodes;
         }
     }
 }
