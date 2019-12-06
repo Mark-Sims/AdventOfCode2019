@@ -34,19 +34,19 @@ namespace Day2
 
             // Part B
 
-            //            Dictionary<string, int> testPartB = new Dictionary<string, int>
-            //            {
-            //                {"14" , 2},
-            //                {"1969" , 966},
-            //                {"100756" , 50346},
-            //            };
-            //
-            //            foreach (var testCase in testPartB)
-            //            {
-            //                Assert.Equal(testCase.Value, PartB(new string[] { testCase.Key }));
-            //            }
-            //
-            //            Console.WriteLine(PartB(lines));
+            // Brute Force
+            for (int i = 0; i < 100; i++)
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    if (PartB(line, i, j) == 19690720)
+                    {
+                        Console.WriteLine("noun: " + i + " verb: " + j);
+                    }
+                }
+
+            }
+
         }
 
         private static int[] splitInputLine(string intcodesLine)
@@ -88,6 +88,44 @@ namespace Day2
             }
 
             return intcodes;
+        }
+
+        private static int PartB(string intcodesString, int noun, int verb)
+        {
+            int[] intcodes = splitInputLine(intcodesString);
+            intcodes[1] = noun;
+            intcodes[2] = verb;
+
+            for (int address = 0; address < intcodes.Length; address += 4)
+            {
+                int opcode = intcodes[address];
+
+                if (opcode == 99)
+                {
+                    // Console.WriteLine("Breaking");
+                    break;
+                }
+                else if (opcode == 1)
+                {
+                    int param1 = intcodes[address + 1];
+                    int param2 = intcodes[address + 2];
+                    int param3 = intcodes[address + 3];
+                    intcodes[param3] = intcodes[param1] + intcodes[param2];
+                    // Console.WriteLine("Index: " + address + " Opcode: " + opcode + " Purview: [" + intcodes[address] + ", " + intcodes[address + 1] + ", " + intcodes[address + 2] + ", " + intcodes[address + 3] + "]");
+                    // Console.WriteLine("Addition, updating address " + intcodes[address + 3] + " to " + intcodes[param1] + intcodes[param2]);
+                }
+                else if (opcode == 2)
+                {
+                    int param1 = intcodes[address + 1];
+                    int param2 = intcodes[address + 2];
+                    int param3 = intcodes[address + 3];
+                    intcodes[param3] = intcodes[param1] * intcodes[param2];
+                    // Console.WriteLine("Index: " + address + " Opcode: " + opcode + " Purview: [" + intcodes[address] + ", " + intcodes[address + 1] + ", " + intcodes[address + 2] + ", " + intcodes[address + 3] + "]");
+                    // Console.WriteLine("Multiplying, updating address " + intcodes[address + 3] + " to " + intcodes[param1] + intcodes[param2]);
+                }
+            }
+
+            return intcodes[0];
         }
     }
 }
