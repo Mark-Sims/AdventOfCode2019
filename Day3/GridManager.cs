@@ -1,38 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace Day3
 {
     class GridManager
     {
-        public Cell[,] Grid { get; set; }
-        private int _centerX { get; set; }
-        private int _centerY { get; set; }
+        public Dictionary<Point, HashSet<int>> Cells { get; set; }
+        public int CenterX { get; set; }
+        public int CenterY { get; set; }
 
         public GridManager(int xDimension, int yDimension, int centerX, int centerY)
         {
-            Grid = new Cell[xDimension, yDimension];
-            _centerX = centerX;
-            _centerY = centerY;
+            CenterX = centerX;
+            CenterY = centerY;
+            Cells = new Dictionary<Point, HashSet<int>>();
         }
 
         public Point WalkUp(Point startPoint, int distance, int wireNumber)
         {
-            int x = startPoint.X;
-            int y;
+            Point p = new Point();
+            p.X = startPoint.X;
             for (int i = 0; i < distance; i++)
             {
-                y = startPoint.Y + i;
-                if (Grid[x, y] == null)
+                p.Y = startPoint.Y + i;
+                if (!Cells.ContainsKey(p))
                 {
-                    Grid[x, y] = new Cell();
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p] = new HashSet<int> { wireNumber };
                 }
-                else if (!Grid[x, y].Wires.Contains(wireNumber))
+                else
                 {
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p].Add(wireNumber);
                 }
             }
             return new Point(startPoint.X, startPoint.Y + distance);
@@ -40,19 +40,18 @@ namespace Day3
 
         public Point WalkRight(Point startPoint, int distance, int wireNumber)
         {
-            int x;
-            int y = startPoint.Y;
+            Point p = new Point();
+            p.Y = startPoint.Y;
             for (int i = 0; i < distance; i++)
             {
-                x = startPoint.X + i;
-                if (Grid[x, y] == null)
+                p.X = startPoint.X + i;
+                if (!Cells.ContainsKey(p))
                 {
-                    Grid[x, y] = new Cell();
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p] = new HashSet<int> { wireNumber };
                 }
-                else if (!Grid[x, y].Wires.Contains(wireNumber))
+                else
                 {
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p].Add(wireNumber);
                 }
             }
             return new Point(startPoint.X + distance, startPoint.Y);
@@ -60,19 +59,18 @@ namespace Day3
 
         public Point WalkDown(Point startPoint, int distance, int wireNumber)
         {
-            int x = startPoint.X;
-            int y;
+            Point p = new Point();
+            p.X = startPoint.X;
             for (int i = 0; i < distance; i++)
             {
-                y = startPoint.Y - i;
-                if (Grid[x, y] == null)
+                p.Y = startPoint.Y - i;
+                if (!Cells.ContainsKey(p))
                 {
-                    Grid[x, y] = new Cell();
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p] = new HashSet<int> { wireNumber };
                 }
-                else if (!Grid[x, y].Wires.Contains(wireNumber))
+                else
                 {
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p].Add(wireNumber);
                 }
             }
             return new Point(startPoint.X, startPoint.Y - distance);
@@ -80,60 +78,21 @@ namespace Day3
 
         public Point WalkLeft(Point startPoint, int distance, int wireNumber)
         {
-            int x;
-            int y = startPoint.Y;
+            Point p = new Point();
+            p.Y = startPoint.Y;
             for (int i = 0; i < distance; i++)
             {
-                x = startPoint.X - i;
-                if (Grid[x, y] == null)
+                p.X = startPoint.X - i;
+                if (!Cells.ContainsKey(p))
                 {
-                    Grid[x, y] = new Cell();
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p] = new HashSet<int> { wireNumber };
                 }
-                else if (!Grid[x, y].Wires.Contains(wireNumber))
+                else
                 {
-                    Grid[x, y].Wires.Add(wireNumber);
+                    Cells[p].Add(wireNumber);
                 }
             }
             return new Point(startPoint.X - distance, startPoint.Y);
         }
-
-        public override string ToString()
-        {
-            string ret = "";
-            foreach (var a in Grid)
-            {
-                ret += a;
-            }
-
-            return ret;
-        }
-
-        //public string PrintGrid()
-        //{
-        //    int rowLength = Grid.GetLength(0);
-        //    int colLength = Grid.GetLength(1);
-
-        //    string ret = "";
-
-        //    for (int i = 0; i < rowLength; i++)
-        //    {
-        //        Console.WriteLine("{0}/{1}", i, rowLength);
-        //        for (int j = 0; j < colLength; j++)
-        //        {
-        //            if (Grid[i, j] == null)
-        //            {
-        //                ret += " ";
-        //            }
-        //            else
-        //            {
-        //                ret += string.Format("{0} ", Grid[i, j]);
-        //            }
-        //        }
-        //        ret += Environment.NewLine + Environment.NewLine;
-        //    }
-
-        //    return ret;
-        //}
     }
 }

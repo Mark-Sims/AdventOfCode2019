@@ -28,6 +28,37 @@ namespace Day3
 
             TraceWire(gridManager, new Point(startingX, startingY), wire1, 1);
             TraceWire(gridManager, new Point(startingX, startingY), wire2, 2);
+
+            // Collect the points that intersect
+            List<Point> intersectionPoints = new List<Point>();
+            foreach (var cell in gridManager.Cells)
+            {
+                if (cell.Value.Count > 1)
+                {
+                    intersectionPoints.Add(cell.Key);
+                }
+            }
+
+            // Find the point closest to the starting position aka center
+            var minDistance = int.MaxValue;
+            foreach (var point in intersectionPoints)
+            {
+                // Ignore the center point
+                if (point.X == gridManager.CenterX && point.Y == gridManager.CenterY)
+                {
+                    continue;
+                }
+
+                var xDistance = Math.Abs(point.X - gridManager.CenterX);
+                var yDistance = Math.Abs(point.Y - gridManager.CenterY);
+                var dist = xDistance + yDistance;
+
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    Console.WriteLine(minDistance);
+                }
+            }
         }
 
         public static void TraceWire(GridManager gridManager, Point startingPoint, List<MovementCommand> wire, int wireNumber)
@@ -61,9 +92,6 @@ namespace Day3
             GridDimensions requiredGridWire1 = CalculateRequiredGridSizeForWire(wire1);
             GridDimensions requiredGridWire2 = CalculateRequiredGridSizeForWire(wire2);
 
-            //Console.WriteLine(requiredGridWire1);
-            //Console.WriteLine(requiredGridWire2);
-
             GridDimensions totalGrid = new GridDimensions()
             {
                 MinX = Math.Min(requiredGridWire1.MinX, requiredGridWire2.MinX),
@@ -71,11 +99,6 @@ namespace Day3
                 MinY = Math.Min(requiredGridWire1.MinY, requiredGridWire2.MinY),
                 MaxY = Math.Max(requiredGridWire1.MaxY, requiredGridWire2.MaxY),
             };
-
-            //Console.WriteLine(minX);
-            //Console.WriteLine(maxX);
-            //Console.WriteLine(minY);
-            //Console.WriteLine(maxY);
 
             totalGrid.DimensionX = Math.Abs(totalGrid.MinX) + totalGrid.MaxX + 1;
             totalGrid.DimensionY = Math.Abs(totalGrid.MinY) + totalGrid.MaxY + 1;
