@@ -11,7 +11,9 @@ namespace Day4
             var rangeStart = 124075;
             var rangeEnd = 580769;
 
-            var counter = 0;
+            var counterPart1 = 0;
+            var counterPart2 = 0;
+            List<List<int>> candidatePasswords = new List<List<int>>();
             for (var i = rangeStart; rangeStart < rangeEnd; rangeStart++)
             {
 
@@ -36,7 +38,7 @@ namespace Day4
 
                 if (!requirementSatisfied)
                 {
-                    Console.WriteLine("Requirement #1 violated for {0}", candidateString);
+                    //Console.WriteLine("Requirement #1 violated for {0}", candidateString);
                     continue;
                 }
 
@@ -53,15 +55,51 @@ namespace Day4
 
                 if (requirementViolated)
                 {
-                    Console.WriteLine("Requirement #2 violated for {0}", candidateString);
+                    //Console.WriteLine("Requirement #2 violated for {0}", candidateString);
                     continue;
                 }
 
                 // Both requirements satisfied, this is a valid password candidate
-                counter++;
+                counterPart1++;
+                candidatePasswords.Add(candidate);
             }
 
-            Console.WriteLine(counter);
+            // Part 2 - For requirement #1, the required series of repeated characters cannot be a part
+            // of a larger series of repeated characters. In other words, there must be some character
+            // that is repeated exactly 2 times. (Other requirements still apply as well.)
+            foreach (var candidate in candidatePasswords)
+            {
+                Dictionary<int, int> numOfEachDigit = new Dictionary<int, int>();
+                foreach (int digit in candidate)
+                {
+                    if (numOfEachDigit.ContainsKey(digit))
+                    {
+                        numOfEachDigit[digit]++;
+                    }
+                    else
+                    {
+                        numOfEachDigit[digit] = 1;
+                    }
+                }
+
+                foreach (var numOfThisDigit in numOfEachDigit.Values)
+                {
+                    if (numOfThisDigit == 2)
+                    {
+                        //string a = "";
+                        //candidate.ForEach(x => a += x.ToString());
+                        //Console.WriteLine(a);
+                        counterPart2++;
+
+                        // Break so that we don't double count passwords that have multiple double digits
+                        // eg. 345566
+                        break;
+                    }
+                }
+            }
+
+            Console.WriteLine(counterPart1);
+            Console.WriteLine(counterPart2);
         }
     }
 }
