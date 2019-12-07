@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Xunit;
 
 namespace Day3
@@ -13,6 +14,8 @@ namespace Day3
 
             // Input file should be a single line
             string[] wires = System.IO.File.ReadAllLines(inputFile);
+            //wires[0] = "R75,D30,R83,U83,L12,D49,R71,U7,L72";
+            //wires[1] = "U62,R66,U55,R34,D71,R55,D58,R83";
             List<MovementCommand> wire1 = ParseInputCommandLine(wires[0]);
             List<MovementCommand> wire2 = ParseInputCommandLine(wires[1]);
 
@@ -31,56 +34,52 @@ namespace Day3
 
             // Collect the points that intersect
             List<Point> intersectionPoints = new List<Point>();
+            List<int> stepDistance = new List<int>();
             foreach (var cell in gridManager.Cells)
             {
                 if (cell.Value.Count > 1)
                 {
                     intersectionPoints.Add(cell.Key);
+
+                    int totalDistance = 0;
+                    foreach (var wire in cell.Value)
+                    {
+                        totalDistance += wire.Steps;
+                    }
+
+                    // Again, forget about the middle point. It doesn't intersect with itself.
+                    if (totalDistance != 0)
+                    {
+                        stepDistance.Add(totalDistance);
+                    }
                 }
             }
 
-            // Find the point closest to the starting position aka center
-            var minDistance = int.MaxValue;
-            foreach (var point in intersectionPoints)
-            {
-                // Ignore the center point
-                if (point.X == gridManager.CenterX && point.Y == gridManager.CenterY)
-                {
-                    continue;
-                }
-
-                var xDistance = Math.Abs(point.X - gridManager.CenterX);
-                var yDistance = Math.Abs(point.Y - gridManager.CenterY);
-                var dist = xDistance + yDistance;
-
-                if (dist < minDistance)
-                {
-                    minDistance = dist;
-                    Console.WriteLine(minDistance);
-                }
-            }
+            Console.WriteLine(stepDistance.Min());
         }
 
         public static void TraceWire(GridManager gridManager, Point startingPoint, List<MovementCommand> wire, int wireNumber)
         {
+            int steps = 0;
             foreach (MovementCommand command in wire)
             {
-                Console.WriteLine("Tracing {0}", command);
+                //Console.WriteLine("Tracing {0}", command);
                 switch (command.Direction)
                 {
                     case Direction.Up:
-                        startingPoint = gridManager.WalkUp(startingPoint, command.Distance, wireNumber);
+                        startingPoint = gridManager.WalkUp(startingPoint, command.Distance, wireNumber, steps);
                         break;
                     case Direction.Right:
-                        startingPoint = gridManager.WalkRight(startingPoint, command.Distance, wireNumber);
+                        startingPoint = gridManager.WalkRight(startingPoint, command.Distance, wireNumber, steps);
                         break;
                     case Direction.Down:
-                        startingPoint = gridManager.WalkDown(startingPoint, command.Distance, wireNumber);
+                        startingPoint = gridManager.WalkDown(startingPoint, command.Distance, wireNumber, steps);
                         break;
                     case Direction.Left:
-                        startingPoint = gridManager.WalkLeft(startingPoint, command.Distance, wireNumber);
+                        startingPoint = gridManager.WalkLeft(startingPoint, command.Distance, wireNumber, steps);
                         break;
                 }
+                steps += command.Distance;
             }
         }
 

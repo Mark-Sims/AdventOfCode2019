@@ -15,25 +15,5 @@ namespace Day3
         {
             Wires = new List<int>();
         }
-
-        //public override string ToString()
-        //{
-        //    if (Wires.Contains(1) && Wires.Contains(2))
-        //    {
-        //        return "+";
-        //    }
-        //    if (Wires.Contains(1))
-        //    {
-        //        return "1";
-        //    }
-        //    if (Wires.Contains(2))
-        //    {
-        //        return "2";
-        //    }
-        //    else
-        //    {
-        //        throw new Exception();
-        //    }
-        //}
     }
 }
