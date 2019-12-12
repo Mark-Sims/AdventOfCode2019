@@ -16,7 +16,6 @@ namespace Day5
 
             IntcodeInterpreter i = new IntcodeInterpreter(line);
             i.ExecuteProgram();
-
         }
     }
 }
