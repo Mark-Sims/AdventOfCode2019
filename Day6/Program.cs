@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Day6
 {
@@ -12,17 +13,22 @@ namespace Day6
 
             string[] orbits = System.IO.File.ReadAllLines(inputFile);
 
-            Planet COM = BuildSolarSystem(orbits);
+            Dictionary<string, Planet> solarSystem = BuildSolarSystem(orbits);
 
-            Console.WriteLine(DFS(COM, 0));
+            // Part 1
+            Console.WriteLine(DFS(solarSystem["COM"], 0));
+
+            // Part 2
+            DFSForPlanet(solarSystem["YOU"], null, "SAN", 0);
+
             Console.WriteLine("Press any key...");
             Console.ReadLine();
+
         }
 
         private static int DFS(Planet planet, int currentDepth)
         {
-            Console.WriteLine("Planet: " + planet.Name + " - Depth Of: " + currentDepth);
-
+            // Console.WriteLine("Planet: " + planet.Name + " - Depth Of: " + currentDepth);
             var depthOfAllChildren = 0;
             foreach (var child in planet.ChildPlanets)
             {
@@ -30,11 +36,30 @@ namespace Day6
             }
 
             int ret = depthOfAllChildren + currentDepth;
-            Console.WriteLine("Planet: " + planet.Name + " - Returning: " + ret);
+            // Console.WriteLine("Planet: " + planet.Name + " - Returning: " + ret);
             return ret;
         }
 
-        private static Planet BuildSolarSystem(string[] orbits)
+        private static void DFSForPlanet(Planet currentPlanet, string previousPlanetName, string targetPlanet, int currentDepth)
+        {
+            List<Planet> adjacentPlanets = currentPlanet.ChildPlanets.Where(x => x.Name != previousPlanetName).ToList();
+            adjacentPlanets.Add(currentPlanet.Parent);
+
+            if (currentPlanet.Name == targetPlanet)
+            {
+                Console.WriteLine("Found planet '{0}'. Distance is {1}.", targetPlanet, currentDepth);
+            }
+
+            foreach (var child in adjacentPlanets)
+            {
+                if (child != null && child.Name != previousPlanetName)
+                {
+                    DFSForPlanet(child, currentPlanet.Name, targetPlanet, currentDepth + 1);
+                }
+            }
+        }
+
+        private static Dictionary<string, Planet> BuildSolarSystem(string[] orbits)
         {
             Dictionary<string, Planet> planets = new Dictionary<string, Planet>();
 
@@ -48,7 +73,8 @@ namespace Day6
 
                 if (!planets.ContainsKey(parentName))
                 {
-                    parent = new Planet(parentName);
+                    // Console.WriteLine("Creating parent " + parentName);
+                    parent = new Planet(parentName, null);
                     planets.Add(parentName, parent);
                 }
                 else
@@ -58,7 +84,7 @@ namespace Day6
 
                 if (!planets.ContainsKey(childName))
                 {
-                    child = new Planet(childName);
+                    child = new Planet(childName, parent);
                     planets.Add(childName, child);
                 }
                 else
@@ -67,9 +93,14 @@ namespace Day6
                 }
 
                 parent.ChildPlanets.Add(child);
+
+                if (child.Parent == null)
+                {
+                    child.Parent = parent;
+                }
             }
 
-            return planets["COM"];
+            return planets;
         }
 
         private static string GetParentName(string orbit)
