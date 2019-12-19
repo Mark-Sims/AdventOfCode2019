@@ -7,6 +7,9 @@ namespace Day5
     class IntcodeInterpreter
     {
         private int[] _program;
+        private int _addressPointer;
+        public bool IsHalted { get; set; }
+
         private IEnumerator<int> _inputs;
         private bool _interractiveMode = true;
         private List<int> _outputs;
@@ -14,6 +17,9 @@ namespace Day5
         public IntcodeInterpreter(string programString, IEnumerable<int> inputs = null)
         {
             _program = splitInputLine(programString);
+            _addressPointer = 0;
+            IsHalted = false;
+
             if (inputs != null)
             {
                 _inputs = inputs.GetEnumerator();
@@ -22,7 +28,6 @@ namespace Day5
             _outputs = new List<int>();
         }
 
-
         public void PrepareForExecution(IEnumerable<int> inputs = null)
         {
             if (inputs != null)
@@ -30,18 +35,20 @@ namespace Day5
                 _inputs = inputs.GetEnumerator();
                 _interractiveMode = false;
             }
+
+            _outputs.Clear();
         }
 
         public List<int> ExecuteProgram()
         {
-            for (int addressPointer = 0; addressPointer < _program.Length;)
+            while (_addressPointer < _program.Length)
             {
                 // This string values represents the opcode, as well as the parameter
                 // mode (immediate/positional) for the instruction's parameters.
                 // We left pad with 0's because if the value is contains fewer
                 // parameter modes than the number of values in the instruction,
                 // then the parameter modes are assumed to be positional. (AKA, 0).
-                string value_0 = _program[addressPointer].ToString().PadLeft(5, '0');
+                string value_0 = _program[_addressPointer].ToString().PadLeft(5, '0');
 
                 var instr = new Instruction
                 {
@@ -61,36 +68,43 @@ namespace Day5
                 if (instr.OpCode == 1 || instr.OpCode == 2)
                 {
 
-                    instr.InstructionValue1 = _program[addressPointer + 1];
-                    instr.InstructionValue2 = _program[addressPointer + 2];
-                    instr.InstructionValue3 = _program[addressPointer + 3];
+                    instr.InstructionValue1 = _program[_addressPointer + 1];
+                    instr.InstructionValue2 = _program[_addressPointer + 2];
+                    instr.InstructionValue3 = _program[_addressPointer + 3];
 
-                    addressPointer = ExecuteInstruction(instr, addressPointer);
+                    _addressPointer = ExecuteInstruction(instr, _addressPointer);
                 }
                 else if (instr.OpCode == 3 || instr.OpCode == 4)
                 {
-                    instr.InstructionValue1 = _program[addressPointer + 1];
+                    instr.InstructionValue1 = _program[_addressPointer + 1];
 
-                    addressPointer = ExecuteInstruction(instr, addressPointer);
+                    _addressPointer = ExecuteInstruction(instr, _addressPointer);
+
+                    // Opcode 4 should now yield the program.
+                    if (instr.OpCode == 4)
+                    {
+                        return _outputs;
+                    }
                 }
                 else if (instr.OpCode == 5 || instr.OpCode == 6)
                 {
-                    instr.InstructionValue1 = _program[addressPointer + 1];
-                    instr.InstructionValue2 = _program[addressPointer + 2];
+                    instr.InstructionValue1 = _program[_addressPointer + 1];
+                    instr.InstructionValue2 = _program[_addressPointer + 2];
 
-                    addressPointer = ExecuteInstruction(instr, addressPointer);
+                    _addressPointer = ExecuteInstruction(instr, _addressPointer);
                 }
                 else if (instr.OpCode == 7 || instr.OpCode == 8)
                 {
-                    instr.InstructionValue1 = _program[addressPointer + 1];
-                    instr.InstructionValue2 = _program[addressPointer + 2];
-                    instr.InstructionValue3 = _program[addressPointer + 3];
+                    instr.InstructionValue1 = _program[_addressPointer + 1];
+                    instr.InstructionValue2 = _program[_addressPointer + 2];
+                    instr.InstructionValue3 = _program[_addressPointer + 3];
 
-                    addressPointer = ExecuteInstruction(instr, addressPointer);
+                    _addressPointer = ExecuteInstruction(instr, _addressPointer);
                 }
                 else if (instr.OpCode == 99)
                 {
                     //Console.WriteLine("Breaking...");
+                    IsHalted = true;
                     return _outputs;
                 }
                 // This instruction contains a first value that specifies non-zero parameter modes
@@ -105,7 +119,7 @@ namespace Day5
 
         // Return: The new value for the address pointer. This value is dependent on not only which
         // opcode is executed, but also, sometimes on the outcome of that execution.
-        private int ExecuteInstruction(Instruction instruction, int addressPointer)
+        private int ExecuteInstruction(Instruction instruction, int _addressPointer)
         {
             if (instruction.OpCode == 1)
             {
@@ -130,7 +144,7 @@ namespace Day5
                 }
 
                 _program[(int)instruction.InstructionValue3] = param1 + param2;
-                return addressPointer + 4;
+                return _addressPointer + 4;
             }
             else if (instruction.OpCode == 2)
             {
@@ -155,7 +169,7 @@ namespace Day5
                 }
 
                 _program[(int)instruction.InstructionValue3] = param1 * param2;
-                return addressPointer + 4;
+                return _addressPointer + 4;
             }
             else if (instruction.OpCode == 3)
             {
@@ -170,7 +184,7 @@ namespace Day5
                     //Console.WriteLine("Non-interractive mode input: " + _inputs.Current.ToString());
                     _program[(int)instruction.InstructionValue1] = _inputs.Current;
                 }
-                return addressPointer + 2;
+                return _addressPointer + 2;
             }
             else if (instruction.OpCode == 4)
             {
@@ -192,7 +206,7 @@ namespace Day5
                 {
                     _outputs.Add(param1);
                 }
-                return addressPointer + 2;
+                return _addressPointer + 2;
             }
             else if (instruction.OpCode == 5 || instruction.OpCode == 6)
             {
@@ -224,7 +238,7 @@ namespace Day5
                     }
                     else
                     {
-                        return addressPointer + 3;
+                        return _addressPointer + 3;
                     }
                 }
                 else
@@ -235,7 +249,7 @@ namespace Day5
                     }
                     else
                     {
-                        return addressPointer + 3;
+                        return _addressPointer + 3;
                     }
                 }
 
@@ -272,7 +286,7 @@ namespace Day5
                     _program[(int)instruction.InstructionValue3] = param1 == param2 ? 1 : 0;
                 }
 
-                return addressPointer + 4;
+                return _addressPointer + 4;
             }
             else
             {
