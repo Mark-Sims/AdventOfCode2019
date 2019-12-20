@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Day9
+{
+    class Parameter
+    {
+        public int? UnresolvedValue;
+        public int ResolvedValue;
+        public ParameterMode Mode;
+        public IOMode IOMode;
+    }
+
+    public enum ParameterMode
+    {
+        Position,  // Use the parameter value as an address relative to the current address pointer
+        Immediate, // Use the literal parameter value
+        Relative   // Use the parameter value as an address relative to the "Relative Base" address pointer.
+    }
+
+    public enum IOMode
+    {
+        Read,
+        Write
+    }
+}
