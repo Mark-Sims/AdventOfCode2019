@@ -7,7 +7,7 @@ namespace Day5
 {
     class IntcodeInterpreter
     {
-        private int[] _program;
+        private ProgramMemory _program;
         private int _addressPointer;
         private int _relativeBase;
         public bool IsHalted { get; set; }
@@ -19,7 +19,7 @@ namespace Day5
 
         public IntcodeInterpreter(string programString, IEnumerable<int> inputs = null)
         {
-            _program = splitInputLine(programString);
+            _program = new ProgramMemory(splitInputLine(programString));
             _addressPointer = 0;
             _relativeBase = 0;
             IsHalted = false;
@@ -138,7 +138,7 @@ namespace Day5
 
         public List<int> ExecuteProgram()
         {
-            while (_addressPointer < _program.Length)
+            while (true)
             {
                 // This string values represents the opcode, as well as the parameter
                 // mode (immediate/positional) for the instruction's parameters.
@@ -217,6 +217,15 @@ namespace Day5
 
                     _addressPointer = ExecuteInstruction(instr, _addressPointer);
                 }
+                else if (instr.OpCode == 9)
+                {
+                    instr.Param1.UnresolvedValue = _program[_addressPointer + 1];
+
+                    instr.Param1.IOMode = IOMode.Read;
+
+                    _addressPointer = ExecuteInstruction(instr, _addressPointer);
+
+                }
                 else if (instr.OpCode == 99)
                 {
                     Console.WriteLine("Halting...");
@@ -229,8 +238,6 @@ namespace Day5
                     throw new Exception(string.Format("Unsupported instruction with opcode: {0}", instr.OpCode.ToString()));
                 }
             }
-
-            return _outputs;
         }
 
         // Return: The new value for the address pointer. This value is dependent on not only which
@@ -314,6 +321,12 @@ namespace Day5
                 }
 
                 return _addressPointer + 4;
+            }
+            else if (instruction.OpCode == 9)
+            {
+                _relativeBase += instruction.Param1.ResolvedValue;
+
+                return _addressPointer + 2;
             }
             else
             {
