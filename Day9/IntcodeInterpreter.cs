@@ -8,16 +8,16 @@ namespace Day5
     class IntcodeInterpreter
     {
         private ProgramMemory _program;
-        private int _addressPointer;
-        private int _relativeBase;
+        private long _addressPointer;
+        private long _relativeBase;
         public bool IsHalted { get; set; }
 
-        private IEnumerator<int> _inputs;
+        private IEnumerator<long> _inputs;
         private bool _interractiveMode = true;
-        private List<int> _outputs;
+        private List<long> _outputs;
 
 
-        public IntcodeInterpreter(string programString, IEnumerable<int> inputs = null)
+        public IntcodeInterpreter(string programString, IEnumerable<long> inputs = null)
         {
             _program = new ProgramMemory(splitInputLine(programString));
             _addressPointer = 0;
@@ -29,10 +29,10 @@ namespace Day5
                 _inputs = inputs.GetEnumerator();
                 _interractiveMode = false;
             }
-            _outputs = new List<int>();
+            _outputs = new List<long>();
         }
 
-        public void PrepareForExecution(IEnumerable<int> inputs = null)
+        public void PrepareForExecution(IEnumerable<long> inputs = null)
         {
             if (inputs != null)
             {
@@ -51,26 +51,26 @@ namespace Day5
                 {
                     if (instruction.Param1.IOMode == IOMode.Write)
                     {
-                        instruction.Param1.ResolvedValue = (int)instruction.Param1.UnresolvedValue;
+                        instruction.Param1.ResolvedValue = (long)instruction.Param1.UnresolvedValue;
                     }
                     else
                     {
-                        instruction.Param1.ResolvedValue = _program[(int)instruction.Param1.UnresolvedValue];
+                        instruction.Param1.ResolvedValue = _program[(long)instruction.Param1.UnresolvedValue];
                     }
                 }
                 else if (instruction.Param1.Mode == ParameterMode.Immediate)
                 {
-                    instruction.Param1.ResolvedValue = (int)instruction.Param1.UnresolvedValue;
+                    instruction.Param1.ResolvedValue = (long)instruction.Param1.UnresolvedValue;
                 }
                 else // Relative parameter mode
                 {
                     if (instruction.Param1.IOMode == IOMode.Write)
                     {
-                        instruction.Param1.ResolvedValue = (int)instruction.Param1.UnresolvedValue + _relativeBase;
+                        instruction.Param1.ResolvedValue = (long)instruction.Param1.UnresolvedValue + _relativeBase;
                     }
                     else
                     {
-                        instruction.Param1.ResolvedValue = _program[(int)instruction.Param1.UnresolvedValue + _relativeBase];
+                        instruction.Param1.ResolvedValue = _program[(long)instruction.Param1.UnresolvedValue + _relativeBase];
                     }
                 }
             }
@@ -81,26 +81,26 @@ namespace Day5
                 {
                     if (instruction.Param2.IOMode == IOMode.Write)
                     {
-                        instruction.Param2.ResolvedValue = (int)instruction.Param2.UnresolvedValue;
+                        instruction.Param2.ResolvedValue = (long)instruction.Param2.UnresolvedValue;
                     }
                     else
                     {
-                        instruction.Param2.ResolvedValue = _program[(int)instruction.Param2.UnresolvedValue];
+                        instruction.Param2.ResolvedValue = _program[(long)instruction.Param2.UnresolvedValue];
                     }
                 }
                 else if (instruction.Param2.Mode == ParameterMode.Immediate)
                 {
-                    instruction.Param2.ResolvedValue = (int)instruction.Param2.UnresolvedValue;
+                    instruction.Param2.ResolvedValue = (long)instruction.Param2.UnresolvedValue;
                 }
                 else // Relative parameter mode
                 {
                     if (instruction.Param2.IOMode == IOMode.Write)
                     {
-                        instruction.Param2.ResolvedValue = (int)instruction.Param2.UnresolvedValue + _relativeBase;
+                        instruction.Param2.ResolvedValue = (long)instruction.Param2.UnresolvedValue + _relativeBase;
                     }
                     else
                     {
-                        instruction.Param2.ResolvedValue = _program[(int)instruction.Param2.UnresolvedValue + _relativeBase];
+                        instruction.Param2.ResolvedValue = _program[(long)instruction.Param2.UnresolvedValue + _relativeBase];
                     }
                 }
             }
@@ -111,7 +111,7 @@ namespace Day5
                 {
                     if (instruction.Param3.IOMode == IOMode.Write)
                     {
-                        instruction.Param3.ResolvedValue = (int)instruction.Param3.UnresolvedValue;
+                        instruction.Param3.ResolvedValue = (long)instruction.Param3.UnresolvedValue;
                     }
                     else
                     {
@@ -126,7 +126,7 @@ namespace Day5
                 {
                     if (instruction.Param3.IOMode == IOMode.Write)
                     {
-                        instruction.Param3.ResolvedValue = (int)instruction.Param3.UnresolvedValue + _relativeBase;
+                        instruction.Param3.ResolvedValue = (long)instruction.Param3.UnresolvedValue + _relativeBase;
                     }
                     else
                     {
@@ -136,7 +136,7 @@ namespace Day5
             }
         }
 
-        public List<int> ExecuteProgram()
+        public List<long> ExecuteProgram()
         {
             while (true)
             {
@@ -242,7 +242,7 @@ namespace Day5
 
         // Return: The new value for the address pointer. This value is dependent on not only which
         // opcode is executed, but also, sometimes on the outcome of that execution.
-        private int ExecuteInstruction(Instruction instruction, int _addressPointer)
+        private long ExecuteInstruction(Instruction instruction, long _addressPointer)
         {
             ResolveParameterValues(instruction);
 
@@ -334,9 +334,9 @@ namespace Day5
             }
         }
 
-        private static int[] splitInputLine(string intcodesLine)
+        private static long[] splitInputLine(string intcodesLine)
         {
-            return Array.ConvertAll(intcodesLine.Split(","), s => int.Parse(s));
+            return Array.ConvertAll(intcodesLine.Split(","), s => long.Parse(s));
         }
     }
 }

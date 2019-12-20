@@ -6,8 +6,8 @@ namespace Day9
 {
     class Parameter
     {
-        public int? UnresolvedValue;
-        public int ResolvedValue;
+        public long? UnresolvedValue;
+        public long ResolvedValue;
         public ParameterMode Mode;
         public IOMode IOMode;
     }

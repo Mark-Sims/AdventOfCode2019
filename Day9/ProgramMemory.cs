@@ -7,16 +7,18 @@ namespace Day9
 {
     class ProgramMemory
     {
-        private List<int> _physicalMemory;
-        Dictionary<int, int> _virtualMemory;
+        private List<long> _physicalMemory;
+        Dictionary<long, long> _virtualMemory;
 
-        public ProgramMemory(int[] memory)
+        public ProgramMemory(long[] memory)
         {
             _physicalMemory = memory.ToList();
-            _virtualMemory = new Dictionary<int, int>();
+
+            // Virtual memory is represented by a dict mapping address -> value at that address
+            _virtualMemory = new Dictionary<long, long>();
         }
 
-        public int this[int i]
+        public long this[long i]
         {
             get
             {
@@ -27,7 +29,8 @@ namespace Day9
 
                 if (i < _physicalMemory.Count)
                 {
-                    return _physicalMemory[i];
+                    // Hopefully the initial size of the program doesn't overflow int.MaxValue
+                    return _physicalMemory[(int)i];
                 }
                 else if (_virtualMemory.ContainsKey(i))
                 {
@@ -35,7 +38,7 @@ namespace Day9
                 }
                 else
                 {
-                    return 0;
+                    return 0L;
                 }
             }
             set
@@ -47,7 +50,8 @@ namespace Day9
 
                 if (i < _physicalMemory.Count)
                 {
-                    _physicalMemory[i] = value;
+                    // Hopefully the initial size of the program doesn't overflow int.MaxValue
+                    _physicalMemory[(int)i] = value;
                 }
                 else
                 {

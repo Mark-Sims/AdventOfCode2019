@@ -14,7 +14,10 @@ namespace Day5
             string line = System.IO.File.ReadAllLines(inputFile)[0];
 
             IntcodeInterpreter interpreter = new IntcodeInterpreter(line);
-            interpreter.ExecuteProgram();
+            while (!interpreter.IsHalted)
+            {
+                interpreter.ExecuteProgram();
+            }
         }
     }
 }
