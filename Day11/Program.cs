@@ -28,7 +28,7 @@ namespace Day11
                 if (interpreter.IsHalted)
                 {
                     Console.WriteLine("Robot painted a total of {0} panels.", robot.GetNumberOfPanelsPainted());
-                    return;
+                    break;
                 }
                 robot.PaintPanel((int)programOutput[0]);
 
@@ -46,6 +46,8 @@ namespace Day11
 
                 robot.Step();
             }
+
+            robot.PrettyPrintPanels();
         }
     }
 }
