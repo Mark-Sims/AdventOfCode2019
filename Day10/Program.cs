@@ -12,6 +12,9 @@ namespace Day10
 
             AsteroidField field = new AsteroidField(lines);
             field.CalculateVisibleAsteroids();
+            field.IdentifyMonitoringStation();
+            field.BuildAsteroidDictFromMonitoringStation();
+            field.ZapAsteroids();
 
             Console.WriteLine("Highest number of visible asteroids: " + field.HighestNumberOfVisibleAsteroids);
         }
