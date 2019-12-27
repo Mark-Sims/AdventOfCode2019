@@ -24,15 +24,15 @@ namespace Day14
 
     class ReactionCalculator
     {
-        public int RequiredORE { get; set; }
+        public long RequiredORE { get; set; }
 
         Dictionary<string, Reaction> _availableRecipes;
-        Dictionary<string, int> _chemicalBank;
+        Dictionary<string, long> _chemicalBank;
 
         public ReactionCalculator(string[] recipeLines)
         {
             _availableRecipes = new Dictionary<string, Reaction>();
-            _chemicalBank = new Dictionary<string, int>();
+            _chemicalBank = new Dictionary<string, long>();
 
             foreach (var unparsedReaction in recipeLines)
             {
@@ -43,7 +43,7 @@ namespace Day14
             // ORE is free
             _availableRecipes.Add("ORE", new Reaction
             {
-                Inputs = new Dictionary<string, int>(),
+                Inputs = new Dictionary<string, long>(),
                 OutputChemical = "ORE",
                 OutputChemicalAmount = 1
             });
@@ -52,8 +52,8 @@ namespace Day14
 
         public void Calculate()
         {
-            var chemicalsRequired = new Dictionary<string, int>();
-            chemicalsRequired.Add("FUEL", 1);
+            var chemicalsRequired = new Dictionary<string, long>();
+            chemicalsRequired.Add("FUEL", 2144702);
             chemicalsRequired.Add("ORE", 0);
 
             while (chemicalsRequired.Count > 1)
@@ -89,7 +89,7 @@ namespace Day14
             RequiredORE = chemicalsRequired["ORE"];
         }
 
-        public int CalculateRecipeMultiplier(Reaction recipe, int numOfProductRequired)
+        public long CalculateRecipeMultiplier(Reaction recipe, long numOfProductRequired)
         {
             // If we have some of the needed chemical in the bank
             if (_chemicalBank.ContainsKey(recipe.OutputChemical))
@@ -125,7 +125,7 @@ namespace Day14
             // If the recipe produces less that we need, we'll need to perform it multiple times.
             else
             {
-                var multiplier = (int)Math.Ceiling((double)numOfProductRequired / recipe.OutputChemicalAmount);
+                var multiplier = (long)Math.Ceiling((double)numOfProductRequired / recipe.OutputChemicalAmount);
                 if (recipe.OutputChemicalAmount * multiplier > numOfProductRequired)
                 {
                     _chemicalBank.Add(recipe.OutputChemical, recipe.OutputChemicalAmount * multiplier - numOfProductRequired);
@@ -138,17 +138,17 @@ namespace Day14
 
     class Reaction
     {
-        public Dictionary<string, int> Inputs { get; set; }
+        public Dictionary<string, long> Inputs { get; set; }
 
         // Checmical reactions only product a single chemical.
         public string OutputChemical;
-        public int OutputChemicalAmount;
+        public long OutputChemicalAmount;
 
         public Reaction() { }
 
         public Reaction(string unparsedReaction)
         {
-            Inputs = new Dictionary<string, int>();
+            Inputs = new Dictionary<string, long>();
 
             var reactants = unparsedReaction.Split('=')[0].Trim();
             var products = unparsedReaction.Split('>')[1].Trim();
@@ -157,13 +157,13 @@ namespace Day14
             foreach (var chemicalAndAmount in reactantChemicalsAndAmounts)
             {
                 var trimmedChemicalAndAmount = chemicalAndAmount.Trim();
-                var amount = int.Parse(trimmedChemicalAndAmount.Split(' ')[0]);
+                var amount = long.Parse(trimmedChemicalAndAmount.Split(' ')[0]);
                 var chemical = trimmedChemicalAndAmount.Split(' ')[1];
 
                 Inputs.Add(chemical, amount);
             }
 
-            OutputChemicalAmount = int.Parse(products.Split(' ')[0]);
+            OutputChemicalAmount = long.Parse(products.Split(' ')[0]);
             OutputChemical = products.Split(' ')[1];
         }
     }
