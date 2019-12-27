@@ -8,14 +8,22 @@ namespace Day12
     {
         public List<Planet> planets;
 
-        public HashSet<string> planetArrangementDigest;
+        public HashSet<string> planetXDigest;
+        public HashSet<string> planetYDigest;
+        public HashSet<string> planetZDigest;
+
+        public int XCycle = -1;
+        public int YCycle = -1;
+        public int ZCycle = -1;
+
         public static int[] Primes = new int[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173 };
-        public bool RepeatedArrangement = false;
 
         public SolarSystem(string[] planetPositions)
         {
             planets = new List<Planet>();
-            planetArrangementDigest = new HashSet<string>();
+            planetXDigest = new HashSet<string>();
+            planetYDigest = new HashSet<string>();
+            planetZDigest = new HashSet<string>();
 
             foreach (var planetPosition in planetPositions)
             {
@@ -74,33 +82,57 @@ namespace Day12
 
         public void SaveSolarSystemStateDigest()
         {
-            string digest = "";
+            string Xdigest = "";
+            string Ydigest = "";
+            string Zdigest = "";
             for (int i = 0; i < planets.Count; i++)
             {
-                digest += planets[i].PositionX;
-                digest += ",";
-                digest += planets[i].PositionY;
-                digest += ",";
-                digest += planets[i].PositionZ;
-                digest += ",";
-                digest += planets[i].VelocityX;
-                digest += ",";
-                digest += planets[i].VelocityY;
-                digest += ",";
-                digest += planets[i].VelocityZ;
-                digest += ",";
+                Xdigest += planets[i].PositionX;
+                Xdigest += ",";
+                Ydigest += planets[i].PositionY;
+                Ydigest += ",";
+                Zdigest += planets[i].PositionZ;
+                Zdigest += ",";
+                Xdigest += planets[i].VelocityX;
+                Xdigest += ",";
+                Ydigest += planets[i].VelocityY;
+                Ydigest += ",";
+                Zdigest += planets[i].VelocityZ;
+                Zdigest += ",";
             }
 
-            if (planetArrangementDigest.Contains(digest))
+            if (XCycle == -1)
             {
-                RepeatedArrangement = true;
-                foreach (var planet in planets)
+                if (planetXDigest.Contains(Xdigest))
                 {
-                    Console.WriteLine(planet);
+                    XCycle = planetXDigest.Count;
+                    Console.WriteLine("X cycles every {0} steps.", XCycle);
                 }
+
+                planetXDigest.Add(Xdigest);
             }
 
-            planetArrangementDigest.Add(digest);
+            if (YCycle == -1)
+            {
+                if (planetYDigest.Contains(Ydigest))
+                {
+                    YCycle = planetYDigest.Count;
+                    Console.WriteLine("Y cycles every {0} steps.", YCycle);
+                }
+
+                planetYDigest.Add(Ydigest);
+            }
+
+            if (ZCycle == -1)
+            {
+                if (planetZDigest.Contains(Zdigest))
+                {
+                    ZCycle = planetZDigest.Count;
+                    Console.WriteLine("Z cycles every {0} steps.", ZCycle);
+                }
+
+                planetZDigest.Add(Zdigest);
+            }
         }
 
         public void ApplyGravity(Planet newPlanet, Planet original, Planet comparisonPlanet)

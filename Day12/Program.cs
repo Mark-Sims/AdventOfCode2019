@@ -14,12 +14,10 @@ namespace Day12
 
             var solarSystem = new SolarSystem(planets);
 
-            while (!solarSystem.RepeatedArrangement)
+            while (solarSystem.XCycle == -1 || solarSystem.YCycle == -1 || solarSystem.ZCycle == -1)
             {
                 solarSystem.AdvanceTimeStep();
             }
-
-            Console.WriteLine("Repeated arrangement after {0} steps.", solarSystem.planetArrangementDigest.Count);
         }
     }
 }
