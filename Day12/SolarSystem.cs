@@ -8,21 +8,14 @@ namespace Day12
     {
         public List<Planet> planets;
 
-        // Rather than storing the full solar system, I'll store a custom digest of the positions and
-        // velocities of the planets using prime numbers.
-        // a(Planet 1's X Position) + b(Planet 1's Y Position) + c(Planet 1's Z Position) + ... repeat for velocities
-        // + z(Planet N's Z Velocity) = some integer.
-        // The lower case coefficients above will all be unique prime numbers.
-        // The final integer value produced by this equation will be unique to only the arrangement of Positions and
-        // Velocities that produced it.
-        public HashSet<int> planetArrangementDigest;
+        public HashSet<string> planetArrangementDigest;
         public static int[] Primes = new int[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173 };
         public bool RepeatedArrangement = false;
 
         public SolarSystem(string[] planetPositions)
         {
             planets = new List<Planet>();
-            planetArrangementDigest = new HashSet<int>();
+            planetArrangementDigest = new HashSet<string>();
 
             foreach (var planetPosition in planetPositions)
             {
@@ -81,33 +74,24 @@ namespace Day12
 
         public void SaveSolarSystemStateDigest()
         {
-            //Console.WriteLine("Starting digest");
-            int digest = 0;
+            string digest = "";
             for (int i = 0; i < planets.Count; i++)
             {
-                //Console.Write("Digest: ");
-                digest += planets[i].PositionX * Primes[i * 6 + 0];
-                //Console.Write(digest);
-                //Console.Write(", ");
-                digest += planets[i].PositionY * Primes[i * 6 + 1];
-                //Console.Write(digest);
-                //Console.Write(", ");
-                digest += planets[i].PositionZ * Primes[i * 6 + 2];
-                //Console.Write(digest);
-                //Console.Write(", ");
-                digest += planets[i].VelocityX * Primes[i * 6 + 3];
-                //Console.Write(digest);
-                //Console.Write(", ");
-                digest += planets[i].VelocityY * Primes[i * 6 + 4];
-                //Console.Write(digest);
-                //Console.Write(", ");
-                digest += planets[i].VelocityZ * Primes[i * 6 + 5];
-                //Console.Write(digest);
-                //Console.Write(", ");
-                //Console.WriteLine("-------");
+                digest += planets[i].PositionX;
+                digest += ",";
+                digest += planets[i].PositionY;
+                digest += ",";
+                digest += planets[i].PositionZ;
+                digest += ",";
+                digest += planets[i].VelocityX;
+                digest += ",";
+                digest += planets[i].VelocityY;
+                digest += ",";
+                digest += planets[i].VelocityZ;
+                digest += ",";
             }
 
-            if (planetArrangementDigest.Contains(digest) || digest == -234)
+            if (planetArrangementDigest.Contains(digest))
             {
                 RepeatedArrangement = true;
                 foreach (var planet in planets)
