@@ -286,10 +286,11 @@ namespace Day13
                 {
                     Console.WriteLine(instruction.Param1.ResolvedValue);
                 }
-                else
-                {
-                    _output = instruction.Param1.ResolvedValue;
-                }
+
+                // Always set the output value even if in iterractive mode.
+                // It can just be ignored if not wanted.
+                _output = instruction.Param1.ResolvedValue;
+
                 return _addressPointer + 2;
             }
             else if (instruction.OpCode == 5 || instruction.OpCode == 6)
