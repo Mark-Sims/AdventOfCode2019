@@ -14,9 +14,6 @@ namespace Day13
             string line = System.IO.File.ReadAllLines(inputFile)[0];
 
             IntcodeInterpreter interpreter = new IntcodeInterpreter(line, isInterractiveMode: false);
-
-            List<long> programOutput;
-
             IntcodeArcadeGame game = new IntcodeArcadeGame();
 
             // This section creates the game level from the puzzle input
