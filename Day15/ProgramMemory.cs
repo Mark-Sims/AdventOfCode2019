@@ -9,6 +9,12 @@ namespace Day15
         private List<long> _physicalMemory;
         Dictionary<long, long> _virtualMemory;
 
+        public ProgramMemory(ProgramMemory p)
+        {
+            _physicalMemory = new List<long>(p._physicalMemory);
+            _virtualMemory = new Dictionary<long, long>(p._virtualMemory);
+        }
+
         public ProgramMemory(long[] memory)
         {
             _physicalMemory = memory.ToList();

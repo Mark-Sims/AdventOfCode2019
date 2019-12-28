@@ -14,6 +14,17 @@ namespace Day15
         private bool _interractiveMode;
         private long? _output = null;
 
+        public IntcodeInterpreter(IntcodeInterpreter i)
+        {
+            _program = new ProgramMemory(i._program);
+            _addressPointer = i._addressPointer;
+            _relativeBase = i._relativeBase;
+            IsHalted = i.IsHalted;
+
+            _interractiveMode = i._interractiveMode;
+            _output = i._output;
+        }
+
         public IntcodeInterpreter(string programString, IEnumerable<long> inputs = null, bool isInterractiveMode = true)
         {
             _program = new ProgramMemory(splitInputLine(programString));
